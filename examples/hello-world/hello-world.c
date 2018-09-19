@@ -50,8 +50,8 @@ PROCESS_THREAD(hello_world_process, ev, data)
 
   PROCESS_BEGIN();
 
-  /* Setup a periodic timer that expires after 10 seconds. */
-  etimer_set(&timer, CLOCK_SECOND * 10);
+  /* Setup a periodic timer that expires after 2 seconds. */
+  etimer_set(&timer, CLOCK_SECOND * 2);
 
   while(1) {
     printf("Hello, world\n");
