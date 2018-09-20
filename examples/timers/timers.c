@@ -30,6 +30,13 @@
  *
  */
 
+/**
+ * \file
+ *         Example use of ctimers and rtimers
+ * \author
+ *         Luca Mottola <luca@sics.se>
+ */
+
 #include "contiki.h"
 
 #include <stdio.h> /* For printf() */
@@ -37,7 +44,11 @@
 /*---------------------------------------------------------------------------*/
 static void ctimer_callback(void *data);
 #define CTIMER_INTERVAL 2 * CLOCK_SECOND
-static struct ctimer print_timer;
+static struct ctimer print_ctimer;
+/*---------------------------------------------------------------------------*/
+static void rtimer_callback(struct rtimer *t, void *data);
+#define RTIMER_HARD_INTERVAL 2 * RTIMER_SECOND
+static struct rtimer print_rtimer;
 /*---------------------------------------------------------------------------*/
 PROCESS(hello_world_ctimer, "Hello world process");
 AUTOSTART_PROCESSES(&hello_world_ctimer);
@@ -46,17 +57,32 @@ static void ctimer_callback(void *data){
 
   printf("%s", (char *)data);
   
-  /* Reschedule the  ctimer . */
-  ctimer_set(&print_timer, CTIMER_INTERVAL, ctimer_callback, "Hello world\n");  
+  /* Reschedule the ctimer. */
+  ctimer_set(&print_ctimer, CTIMER_INTERVAL, ctimer_callback, "Hello world CT\n");  
+}
+/*---------------------------------------------------------------------------*/
+static void rtimer_callback(struct rtimer *t, void *data){
+
+  printf("%s", (char *)data);
+  
+  /* Reschedule the rtimer. */
+  rtimer_set(&print_rtimer, RTIMER_NOW()+RTIMER_HARD_INTERVAL, 0, rtimer_callback, "Hello world RT\n");
 }
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(hello_world_ctimer, ev, data)
 {
   PROCESS_BEGIN();
 
-  /* Setup a  ctimer that expires after 2 seconds. */
-  ctimer_set(&print_timer, CTIMER_INTERVAL, ctimer_callback, "Hello world\n");
 
+  rtimer_init();
+
+  /* Schedule the rtimer: absolute time! */
+  rtimer_set(&print_rtimer, RTIMER_NOW()+RTIMER_HARD_INTERVAL, 0, rtimer_callback, "Hello world RT\n");
+
+  /* Schedule the ctimer. */
+  ctimer_set(&print_ctimer, CTIMER_INTERVAL, ctimer_callback, "Hello world CT\n");
+
+  /* Only usefule for platform native. */
   PROCESS_WAIT_EVENT();
 
   PROCESS_END();
