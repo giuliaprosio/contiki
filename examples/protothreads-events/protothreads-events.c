@@ -57,8 +57,9 @@ PROCESS_THREAD(ping_process, ev, data)
 
   /* Make sure the other process has time to start... */
   PROCESS_PAUSE();
-  
+
   /* Start the ping pong... */
+  ping_event=process_alloc_event();
   process_post(&pong_process, ping_event, &count);
   printf("Sent the first ping!\n");
   
@@ -90,23 +91,18 @@ PROCESS_THREAD(ping_process, ev, data)
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(pong_process, ev, data)
 {
-  static struct etimer timer;
 
   PROCESS_BEGIN();
+  pong_event=process_alloc_event();
   
   while(1) {
 
-    /* Wait for events: either etimers or ping. */
+    /* Wait for ping events. */
     PROCESS_WAIT_EVENT();
 
     if (ev == ping_event) {
 
       printf("Got a ping: %d!\n",*(int*)data);
-
-      /* Responding with a ping in 2 seconds. */
-      etimer_set(&timer, CLOCK_SECOND * 2);
-      
-    } else if (ev==PROCESS_EVENT_TIMER){
 
       count++;
       process_post(&ping_process, pong_event, &count);
