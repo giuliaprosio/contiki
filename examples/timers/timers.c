@@ -82,7 +82,7 @@ PROCESS_THREAD(hello_world_ctimer, ev, data)
   /* Schedule the ctimer. */
   ctimer_set(&print_ctimer, CTIMER_INTERVAL, ctimer_callback, "Hello world CT\n");
 
-  /* Only usefule for platform native. */
+  /* Only useful for platform native. */
   PROCESS_WAIT_EVENT();
 
   PROCESS_END();
