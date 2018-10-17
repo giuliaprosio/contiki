@@ -14,3 +14,11 @@ include $(CONTIKI)/Makefile.identify-target
 MODULES_REL += $(TARGET)
 
 include $(CONTIKI)/Makefile.include
+
+PREFIX ?= fd00::1/64
+
+connect-router-ACM0:	$(CONTIKI)/tools/serial-io/tunslip6
+	sudo $(CONTIKI)/tools/serial-io/tunslip6 -L -s ttyACM0 $(PREFIX)
+
+connect-router-ACM2:	$(CONTIKI)/tools/serial-io/tunslip6
+	sudo $(CONTIKI)/tools/serial-io/tunslip6 -L -s ttyACM2 $(PREFIX)
