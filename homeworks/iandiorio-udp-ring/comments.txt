@@ -1,0 +1,3 @@
+To run with 3-10 nodes, the simulation takes around 10 minutes to complete 10 rings round, running at 100% speed.
+
+Running with 30-50 nodes, the speed drops drastically around 10-18%.
