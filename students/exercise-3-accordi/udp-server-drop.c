@@ -57,10 +57,14 @@ udp_rx_callback(struct simple_udp_connection *c,
 {
   unsigned count = *(unsigned *)data;
   if(count>STOP){ 
+    LOG_INFO_("Treshold reached!\n");
     return;
   }
-  count++;
   LOG_INFO("Received response %u from ", count);
+  LOG_INFO_6ADDR(sender_addr);
+  LOG_INFO_("\n");
+  count++;
+  LOG_INFO("Sending response %u to ", count);
   LOG_INFO_6ADDR(sender_addr);
   LOG_INFO_("\n");
   simple_udp_sendto(&udp_conn, &count, sizeof(count), sender_addr);

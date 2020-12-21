@@ -36,15 +36,20 @@ udp_rx_callback(struct simple_udp_connection *c,
          const uint8_t *data,
          uint16_t datalen)
 {
-  etimer_reset(&timer);
+  etimer_restart(&timer);
+  LOG_INFO("CallbackReached!\n");
   if(count>STOP){ 
+    LOG_INFO_("Treshold reached!\n");
     done=true;
     return;
   }
   unsigned temp = *(unsigned *)data;
+  LOG_INFO("Received response %u from ", temp);
+  LOG_INFO_6ADDR(sender_addr);
+  LOG_INFO_("\n");
   if(temp==(count+1)){
     count=temp+1;
-    LOG_INFO("Received response %u from ", count);
+    LOG_INFO("Sending response %u to ", count);
     LOG_INFO_6ADDR(sender_addr);
     LOG_INFO_("\n");
     simple_udp_sendto(&udp_conn, &count, sizeof(count), sender_addr);
@@ -55,31 +60,39 @@ udp_rx_callback(struct simple_udp_connection *c,
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(udp_client_process, ev, data)
 {
+  static struct etimer periodic_timer;
   uip_ipaddr_t dest_ipaddr;
 
   PROCESS_BEGIN();
-  etimer_set(&timer, CLOCK_SECOND * 2);
   /* Initialize UDP connection */
   simple_udp_register(&udp_conn, UDP_CLIENT_PORT, NULL,
                       UDP_SERVER_PORT, udp_rx_callback);
+  etimer_set(&periodic_timer, random_rand() % SEND_INTERVAL);
   /* Loop until you reach the root of the DAG */
   while (1)
   {
+    PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&periodic_timer));
     if(NETSTACK_ROUTING.node_is_reachable() && NETSTACK_ROUTING.get_root_ipaddr(&dest_ipaddr)) {
       /* Send to DAG root */
       LOG_INFO("Sending request %u to ", count);
       LOG_INFO_6ADDR(&dest_ipaddr);
       LOG_INFO_("\n");
+      etimer_set(&timer, CLOCK_SECOND * 60);
       simple_udp_sendto(&udp_conn, &count, sizeof(count), &dest_ipaddr);
+      etimer_stop(&periodic_timer);
       break;
     } else {
       LOG_INFO("Not reachable yet\n");
     }
+        /* Add some jitter */
+    etimer_set(&periodic_timer, SEND_INTERVAL
+      - CLOCK_SECOND + (random_rand() % (2 * CLOCK_SECOND)));
   }
   /* Stop the cycle and the thread once the last packet has been received */
   while(!done) {
     PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&timer));
-    etimer_reset(&timer);
+    etimer_set(&timer, CLOCK_SECOND * 60);
+    LOG_INFO("Timer Experied, packet lost. Restart ping pong.\n");
     /* If the timer has been resetted try to recontact the server and set count = 0 */
     count = 0;
     simple_udp_sendto(&udp_conn, &count, sizeof(count), &dest_ipaddr);
