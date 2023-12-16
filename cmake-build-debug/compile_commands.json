@@ -1,0 +1,7 @@
+[
+{
+  "directory": "C:/Users/giuli/OneDrive/Desktop/NSDS/6. CONTIKI-NG/contiki-ng-nsds-22/cmake-build-debug",
+  "command": "C:\\PROGRA~2\\MICROS~2\\2019\\BUILDT~1\\VC\\Tools\\MSVC\\1429~1.301\\bin\\Hostx86\\x86\\cl.exe  /nologo -DBUILD_TYPE_DEBUG -I\"C:\\Users\\giuli\\OneDrive\\Desktop\\NSDS\\6. CONTIKI-NG\\contiki-ng-nsds-22\\tools\" -I\"C:\\Users\\giuli\\OneDrive\\Desktop\\NSDS\\6. CONTIKI-NG\\contiki-ng-nsds-22\\os\" /DWIN32 /D_WINDOWS /W3 /MDd /Zi /Ob0 /Od /RTC1 -std:c11 /FoCMakeFiles\\hello_world.dir\\examples\\hello-world\\hello-world.c.obj /FdTARGET_COMPILE_PDB /FS -c \"C:\\Users\\giuli\\OneDrive\\Desktop\\NSDS\\6. CONTIKI-NG\\contiki-ng-nsds-22\\examples\\hello-world\\hello-world.c\"",
+  "file": "C:\\Users\\giuli\\OneDrive\\Desktop\\NSDS\\6. CONTIKI-NG\\contiki-ng-nsds-22\\examples\\hello-world\\hello-world.c"
+}
+]
