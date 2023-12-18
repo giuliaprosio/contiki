@@ -70,3 +70,6 @@ cpu/x86/uefi/edk2
 
 # MacOS temporary file
 .DS_Store
+
+cmake*
+
